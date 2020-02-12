@@ -1,7 +1,30 @@
 [CmdletBinding()]
-param(
-  [Parameter(Mandatory=$true)] [String] $MonoRootDir
+Param(
+  [string] $buildNumber = 'lastSuccessfulBuild',
+  [switch] $commitChanges = $false
 )
+
+$baseUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/$buildNumber/label=ubuntu-1804-amd64/Azure/"
+$content = Invoke-WebRequest -Uri $baseUrl
+$match = $content -match ('<a href="(processDownloadRequest/(\d+)/.*?)"')
+
+if (!$match) {
+    Write-Error "Unable to find the artifact in $content"
+    return 1
+}
+
+$archivePath = $Matches[1]
+$buildNumber = $Matches[2]
+
+$tempDir = [IO.Path]::Combine($env:Temp, 'blazor-mono', [IO.Path]::GetRandomFileName())
+$downloadPath = Join-Path $tempDir 'mono.zip'
+$MonoRootDir = [IO.Path]::Combine($tempDir, [IO.Path]::GetRandomFileName())
+[IO.Directory]::CreateDirectory($MonoRootDir)
+
+Invoke-WebRequest "${baseUrl}${archivePath}" -OutFile $downloadPath
+
+Add-Type -Assembly System.IO.Compression.FileSystem | Out-Null
+[IO.Compression.ZipFile]::ExtractToDirectory($downloadPath, $MonoRootDir)
 
 # Verify the new binaries can be found at the expected paths
 $inputWasmDir = Join-Path -Path $MonoRootDir -ChildPath "builds\release"
@@ -49,3 +72,9 @@ Copy-Item "$inputFrameworkDir\*.dll" -Destination $outputFrameworkDir
 # We leave the existing linker dir in place, because we don't want to remove the .runtimeconfig.json file
 Copy-Item "$inputLinkerDir\monolinker.exe" -Destination $outputLinkerDir
 Copy-Item "$inputLinkerDir\Mono.Cecil.dll" -Destination $outputLinkerDir
+
+if ($commitChanges) {
+    git add .
+    git commit -m "Updating build to https://jenkins.mono-project.com/job/test-mono-mainline-wasm/$buildNumber"
+}
+
