@@ -2,6 +2,9 @@
 # See https://docs.microsoft.com/azure/devops/pipelines/yaml-schema for details
 #
 
+variables:
+    name: _PAT
+
 # CI and PR triggers
 trigger:
   batch: true
@@ -23,7 +26,7 @@ stages:
           git config --global user.name "Pranav K (bot)"
           git commit -am --allow-empty "Empty test"
           git checkout -B prkrishn/update-mono-build
-          git push origin +prkrishn/update-mono-build
+          git push https://pranavkm:$(_PAT):github.com/pranavkm/blazor +prkrishn/update-mono-build
        
 
 
