@@ -2,9 +2,6 @@
 # See https://docs.microsoft.com/azure/devops/pipelines/yaml-schema for details
 #
 
-variables:
-    name: _PAT
-
 # CI and PR triggers
 trigger:
   batch: true
