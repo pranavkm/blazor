@@ -16,10 +16,15 @@ stages:
   - job: "UpdateMono"
     steps:
     - task: PowerShell@2
-    inputs:
+      inputs:
         filePath: 'UpgradeMono.ps1'
         arguments: '-commitChanges'
-    
-        
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          git checkout -B prkrishn/update-mono-build
+          git push origin prkrishn/update-mono-build
+       
 
 
