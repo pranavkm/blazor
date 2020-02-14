@@ -17,16 +17,13 @@ stages:
     steps:
     - task: PowerShell@2
       inputs:
-        filePath: 'UpgradeMono.ps1'
-        arguments: '-commitChanges'
-    - task: PowerShell@2
-      inputs:
         targetType: 'inline'
         script: |
           git config --global user.email "prkrishn+bot@hotmail.com"
           git config --global user.name "Pranav K (bot)"
+          git commit -am --allow-empty "Empty test"
           git checkout -B prkrishn/update-mono-build
-          git push origin prkrishn/update-mono-build
+          git push origin +prkrishn/update-mono-build
        
 
 
