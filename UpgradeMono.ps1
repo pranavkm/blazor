@@ -1,9 +1,18 @@
 [CmdletBinding()]
 Param(
   [string] $repoRoot = '',
+  [string] $tempDir = '',
   [string] $buildNumber = 'lastSuccessfulBuild',
   [switch] $commitChanges = $false
 )
+
+if (!$repoRoot) {
+    $repoRoot = $PSScriptRoot
+}
+
+if (!$tempDir) {
+    $tempDir = $env:TEMP
+}
 
 $baseUrl = "https://jenkins.mono-project.com/job/test-mono-mainline-wasm/$buildNumber/label=ubuntu-1804-amd64/Azure/"
 $content = Invoke-WebRequest -Uri $baseUrl
@@ -17,12 +26,12 @@ if (!$match) {
 $archivePath = $Matches[1]
 $buildNumber = $Matches[2]
 
-$tempDir = [IO.Path]::Combine($env:Temp, 'blazor-mono', [IO.Path]::GetRandomFileName())
-$downloadPath = Join-Path $tempDir 'mono.zip'
-$MonoRootDir = [IO.Path]::Combine($tempDir, [IO.Path]::GetRandomFileName())
+$blazorTemp = [IO.Path]::Combine($tempDir, 'blazor-mono', [IO.Path]::GetRandomFileName())
+$downloadPath = Join-Path $blazorTemp 'mono.zip'
+$MonoRootDir = [IO.Path]::Combine($blazorTemp, [IO.Path]::GetRandomFileName())
 
-if (Test-Path $MonoRootDir) {
-    Remove-Item -Recurse -Force $MonoRootDir
+if (Test-Path $blazorTemp) {
+    Remove-Item -Recurse -Force $blazorTemp
 }
 
 [IO.Directory]::CreateDirectory($MonoRootDir)
@@ -46,10 +55,6 @@ foreach ($dirToCheck in ($MonoRootDir, $inputWasmDir, $inputBclDir, $inputBclFac
 }
 
 # Delete old binaries
-if (!$repoRoot) {
-    $repoRoot = $PSScriptRoot
-}
-
 $outputRoot = Join-Path -Path $repoRoot -ChildPath "src/Microsoft.AspNetCore.Blazor.Mono/incoming"
 if (-not (Test-Path -LiteralPath $outputRoot)) {
     Write-Error -Message "Directory '$outputRoot' not found." -ErrorAction Stop

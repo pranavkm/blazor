@@ -21,8 +21,8 @@ stages:
           git config --global user.email "prkrishn+bot@hotmail.com"
           git config --global user.name "Pranav K (bot)"
 
-          & "$scriptPath" -repoRoot $(System.DefaultWorkingDirectory) -commitChanges
+          & "$scriptPath" -repoRoot $(System.DefaultWorkingDirectory) -commitChanges -tempDir $(Agent.TempDirectory)
           git push https://pranavkm:$(_PAT)@github.com/pranavkm/blazor +update-mono-build
-       
+
 
 
