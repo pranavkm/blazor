@@ -23,7 +23,7 @@ stages:
           git config --global user.name "Pranav K (bot)"
           git commit -am --allow-empty "Empty test"
           git checkout -B prkrishn/update-mono-build
-          git push https://pranavkm:$(_PAT):github.com/pranavkm/blazor +prkrishn/update-mono-build
+          git push https://pranavkm:$(_PAT)@github.com/pranavkm/blazor +prkrishn/update-mono-build
        
 
 
