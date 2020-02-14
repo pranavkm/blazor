@@ -21,14 +21,13 @@ stages:
         script: |
           $scriptPath = Join-Path $(Agent.TempDirectory) -ChildPath UpgradeMono.ps1
           Copy-Item -Force ./UpgradeMono.ps1 $scriptPath
-          git checkout origin/master -B prkrishn/update-mono-build
+          git fetch https://github.com/dotnet/Blazor master:upstream-master
+          git checkout upstream-master -B update-mono-build --force
           git config --global user.email "prkrishn+bot@hotmail.com"
           git config --global user.name "Pranav K (bot)"
 
           & "$scriptPath" -repoRoot $(System.DefaultWorkingDirectory) -commitChanges
-
-          git checkout -B prkrishn/update-mono-build
-          git push https://pranavkm:$(_PAT)@github.com/pranavkm/blazor +prkrishn/update-mono-build
+          git push https://pranavkm:$(_PAT)@github.com/pranavkm/blazor +update-mono-build
        
 
 
