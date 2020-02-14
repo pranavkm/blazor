@@ -23,6 +23,8 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
+          git config --global user.email "prkrishn+bot@hotmail.com"
+          git config --global user.name "Pranav K (bot)"
           git checkout -B prkrishn/update-mono-build
           git push origin prkrishn/update-mono-build
        
