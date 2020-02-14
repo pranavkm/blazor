@@ -19,7 +19,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          $scriptPath = Join-Path $env:TEMP -ChildPath UpgradeMono.ps1
+          $scriptPath = Join-Path $(Agent.TempDirectory) -ChildPath UpgradeMono.ps1
           Copy-Item -Force ./UpgradeMono.ps1 $scriptPath
           git checkout origin/master -B prkrishn/update-mono-build
           git config --global user.email "prkrishn+bot@hotmail.com"
