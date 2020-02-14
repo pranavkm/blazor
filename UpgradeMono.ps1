@@ -1,5 +1,6 @@
 [CmdletBinding()]
 Param(
+  [string] $repoRoot = '',
   [string] $buildNumber = 'lastSuccessfulBuild',
   [switch] $commitChanges = $false
 )
@@ -40,7 +41,11 @@ foreach ($dirToCheck in ($MonoRootDir, $inputWasmDir, $inputBclDir, $inputBclFac
 }
 
 # Delete old binaries
-$outputRoot = Join-Path -Path $PSScriptRoot -ChildPath "src\Microsoft.AspNetCore.Blazor.Mono\incoming"
+if (!$repoRoot) {
+    $repoRoot = $PSScriptRoot
+}
+
+$outputRoot = Join-Path -Path $repoRoot -ChildPath "src\Microsoft.AspNetCore.Blazor.Mono\incoming"
 if (-not (Test-Path -LiteralPath $outputRoot)) {
     Write-Error -Message "Directory '$outputRoot' not found." -ErrorAction Stop
 }
