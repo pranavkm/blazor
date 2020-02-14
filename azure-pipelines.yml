@@ -3,11 +3,6 @@
 #
 
 # CI and PR triggers
-trigger:
-  batch: true
-  branches:
-    include:
-    - prkrishn/build
 
 stages:
 - stage: build
