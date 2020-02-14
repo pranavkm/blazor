@@ -19,12 +19,12 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          cp ./UpgradeMono.ps1 $env:Temp/UpgradeMono.ps1
+          cp ./UpgradeMono.ps1 $env:Temp/UpgradeMono.ps1 -force
           git checkout origin/master -B prkrishn/update-mono-build
           git config --global user.email "prkrishn+bot@hotmail.com"
           git config --global user.name "Pranav K (bot)"
 
-          $env:Temp/UpgradeMono.ps1 -repoRoot $(System.DefaultWorkingDirectory) -commitChanges
+          & "$env:Temp/UpgradeMono.ps1" -repoRoot $(System.DefaultWorkingDirectory) -commitChanges
 
           git checkout -B prkrishn/update-mono-build
           git push https://pranavkm:$(_PAT)@github.com/pranavkm/blazor +prkrishn/update-mono-build
